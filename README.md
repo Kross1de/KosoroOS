@@ -6,7 +6,7 @@ KosoroOS - OS maded in С++ programming language, this OS maded for fun and stud
 2. String library
 
 # TODO
-- [ ] Write a printf implementation
+- [X] Write a printf implementation
 - [ ] GDT & IDT
 - [ ] VMM & PMM
 
