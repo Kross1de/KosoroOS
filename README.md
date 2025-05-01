@@ -11,7 +11,7 @@ KosoroOS - OS maded in С++ programming language, this OS maded for fun and stud
 - [ ] VMM & PMM
 
 # Screenshot
-![image](https://github.com/user-attachments/assets/b2294b9c-8dfb-4fde-a38c-e8910c57430c)
+![image](https://github.com/user-attachments/assets/27a307a9-7bac-44e8-8c56-1726af72c0a0)
 
 # Credits
 https://github.com/9xbt/bentobox/commit/8d355403a3b22e23158e1c99e7423585398d8c50
