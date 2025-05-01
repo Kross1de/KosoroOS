@@ -7,10 +7,10 @@ KosoroOS - OS maded in NASM programming language, this OS maded for fun and stud
 3. OS build file
 
 # TODO
-- [ ] GDT
+- [X] GDT
 - [ ] IDT
 - [ ] KBD driver
-- [ ] Protected mode
+- [X] Protected mode
 
 # Screenshot
 ![image](https://github.com/user-attachments/assets/26f661a6-c63f-47e4-81b9-def9cabae1a4)
