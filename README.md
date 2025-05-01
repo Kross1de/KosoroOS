@@ -7,8 +7,10 @@ KosoroOS - OS maded in С++ programming language, this OS maded for fun and stud
 
 # TODO
 - [X] Write a printf implementation
-- [ ] GDT & IDT
-- [ ] VMM & PMM
+- [X] GDT
+- [ ] IDT
+- [ ] VMM
+- [ ] PMM
 
 # Screenshot
 ![image](https://github.com/user-attachments/assets/27a307a9-7bac-44e8-8c56-1726af72c0a0)
