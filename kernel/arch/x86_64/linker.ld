@@ -3,6 +3,8 @@ ENTRY(_start)
 SECTIONS
 {
     . = 1M;
+    
+    __kernel_start = .;
 
     text_start_ld = .;
     .text BLOCK(4K) : ALIGN(4K)
@@ -43,4 +45,6 @@ SECTIONS
 		*(.eh_frame)
 		*(.note.gnu.build-id)
 	}
+	
+	__kernel_end = .;
 }
