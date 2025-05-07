@@ -5,22 +5,24 @@
 #include "include/vga/vga.hpp"
 #include "include/pmm.hpp"
 #include "include/version.hpp"
-extern "C" void kmain(void *mboot_info)
-{
+extern "C" void kmain(void *mboot_info) {
     kprintf::printf("kernel loaded\n");
 
     gdt::install();
+    kprintf::printf("1\n");
     idt::install();
+    kprintf::printf("2\n");
     pmm::init(mboot_info);
+    kprintf::printf("3\n");
 
     vga::write_string("Welcome to the KosoroOS!\n",
                       vga::Color::LIGHT_GREEN,
                       vga::Color::DARK_GRAY);
     kprintf::printf("%s %d.%d.%d %s %d %s\n",
-                    kernelName,kernelVMA,kernelVMI,kernelVPA,
-                    kernelArch,kernelBuildDate,kernelBuildTime);
-	//test pmm
-void *page1 = pmm::alloc_page();
+                    kernelName, kernelVMA, kernelVMI, kernelVPA,
+                    kernelArch, kernelBuildDate, kernelBuildTime);
+
+    void *page1 = pmm::alloc_page();
     void *page2 = pmm::alloc_page();
     kprintf::printf("Allocated pages: %p, %p\n", page1, page2);
     pmm::free_page(page1);
@@ -29,8 +31,7 @@ void *page1 = pmm::alloc_page();
                     pmm::get_total_memory() / (1024 * 1024),
                     pmm::get_used_memory() / (1024 * 1024));
 
-    while (true)
-    {
+    while (true) {
         asm volatile("hlt");
     }
 }
