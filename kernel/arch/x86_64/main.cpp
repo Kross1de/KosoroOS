@@ -13,7 +13,7 @@ extern "C" void kmain(void *mboot_info) {
     idt::install();
     kprintf::printf("2\n");
     pmm::init(mboot_info);
-    kprintf::printf("3\n");
+    kprintf::printf("mboot_info: %p\n", mboot_info);
 
     vga::write_string("Welcome to the KosoroOS!\n",
                       vga::Color::LIGHT_GREEN,
