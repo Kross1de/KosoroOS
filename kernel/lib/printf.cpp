@@ -1,4 +1,5 @@
 #include "include/printf.hpp"
+#include "include/string.hpp"
 #include "include/vga/vga.hpp"
 
 namespace kprintf {
@@ -11,77 +12,138 @@ namespace kprintf {
 		vga::write_string(str, vga::Color::WHITE, vga::Color::BLACK);
 	}
 
-	void itoa(int num, char* buffer) {
-		if (num == 0) {
-			buffer[0] = '0';
-			buffer[1] = '\0';
-			return;
-		}
+    void itoa(int num, char* buffer) {
+        if (num == 0) {
+            buffer[0] = '0';
+            buffer[1] = '\0';
+            return;
+        }
 
-		int i = 0;
-		bool is_negative = num < 0;
-		if (is_negative) {
-			num = -num;
-		}
+        bool is_negative = num < 0;
+        if (is_negative) {
+            num = -num;
+        }
 
-		while (num > 0) {
-			buffer[i++] = '0' + (num % 10);
-			num /= 10;
-		}
+        size_t index = 0;
+        while (num > 0) {
+            buffer[index++] = '0' + (num % 10);
+            num /= 10;
+        }
 
-		if (is_negative) {
-			buffer[i++] = '-';
-		}
+        if (is_negative) {
+            buffer[index++] = '-';
+        }
 
-		buffer[i] = '\0';
+        buffer[index] = '\0';
 
-		// reverse the string
-		for (int j = 0, k = i - 1; j < k; j++, k--) {
-			char temp = buffer[j];
-			buffer[j] = buffer[k];
-			buffer[k] = temp;
-		}
-	}
+        for (size_t i = 0; i < index / 2; i++) {
+            char temp = buffer[i];
+            buffer[i] = buffer[index - i - 1];
+            buffer[index - i - 1] = temp;
+        }
+    }
 
-	void printf(const char* fmt, ...) {
-		va_list args;
-		va_start(args, fmt);
+    static void utoa(uint64_t num, char* buffer, int base = 10, bool uppercase = false) {
+        if (num == 0) {
+            buffer[0] = '0';
+            buffer[1] = '\0';
+            return;
+        }
 
-		char buffer[32];
+        size_t index = 0;
+        const char* digits = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
 
-		for (size_t i = 0; fmt[i] != '\0'; i++) {
-			if (fmt[i] == '%') {
-				i++;
-				if (fmt[i] == '\0') break;
+        while (num > 0) {
+            buffer[index++] = digits[num % base];
+            num /= base;
+        }
 
-				switch (fmt[i]) {
-					case 's': {
-						const char* str = va_arg(args, const char*);
-						terminal_write_string(str);
-						break;
-					}
-					case 'd': {
-						int num = va_arg(args, int);
-						itoa(num, buffer);
-						terminal_write_string(buffer);
-						break;
-					}
-					case 'c': {
-						char c = (char)va_arg(args, int);
-						terminal_putchar(c);
-						break;
-					}
-					default:
-						terminal_putchar('%');
-						terminal_putchar(fmt[i]);
-						break;
-				}
-			} else {
-				terminal_putchar(fmt[i]);
-			}
-		}
+        buffer[index] = '\0';
 
-		va_end(args);
-	}
+        for (size_t i = 0; i < index / 2; i++) {
+            char temp = buffer[i];
+            buffer[i] = buffer[index - i - 1];
+            buffer[index - i - 1] = temp;
+        }
+    }
 
-} // namespace kprintf
+    void printf(const char* fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        char buffer[64];
+
+        while (*fmt) {
+            if (*fmt != '%') {
+                terminal_putchar(*fmt++);
+                continue;
+            }
+
+            fmt++;
+
+            int width = 0;
+            while (*fmt >= '0' && *fmt <= '9') {
+                width = width * 10 + (*fmt - '0');
+                fmt++;
+            }
+
+            switch (*fmt) {
+                case 'd': {
+                    int num = va_arg(args, int);
+                    itoa(num, buffer);
+                    int len = kstring::strlen(buffer);
+                    while (len++ < width) terminal_putchar('0');
+                    terminal_write_string(buffer);
+                    break;
+                }
+                case 'u': {
+                    unsigned int num = va_arg(args, unsigned int);
+                    utoa(num, buffer, 10, false);
+                    int len = kstring::strlen(buffer);
+                    while (len++ < width) terminal_putchar('0');
+                    terminal_write_string(buffer);
+                    break;
+                }
+                case 'x':
+                case 'X': {
+                    uint64_t num = va_arg(args, uint64_t);
+                    utoa(num, buffer, 16, (*fmt == 'X'));
+                    int len = kstring::strlen(buffer);
+                    while (len++ < width) terminal_putchar('0');
+                    terminal_write_string(buffer);
+                    break;
+                }
+                case 'p': {
+                    uint64_t ptr = (uint64_t)va_arg(args, void*);
+                    terminal_write_string("0x");
+                    utoa(ptr, buffer, 16, false);
+                    int len = kstring::strlen(buffer);
+                    while (len++ < width) terminal_putchar('0');
+                    terminal_write_string(buffer);
+                    break;
+                }
+                case 's': {
+                    const char* str = va_arg(args, const char*);
+                    int len = kstring::strlen(str);
+                    while (len++ < width) terminal_putchar(' ');
+                    terminal_write_string(str ? str : "(null)");
+                    break;
+                }
+                case 'c': {
+                    char c = (char)va_arg(args, int);
+                    terminal_putchar(c);
+                    break;
+                }
+                case '%':
+                    terminal_putchar('%');
+                    break;
+                default:
+                    terminal_putchar('%');
+                    terminal_putchar(*fmt);
+                    break;
+            }
+            fmt++;
+        }
+
+        va_end(args);
+    }
+}
