@@ -9,11 +9,9 @@ extern "C" void kmain(void *mboot_info) {
     kprintf::printf("kernel loaded\n");
 
     gdt::install();
-    kprintf::printf("1\n");
     idt::install();
-    kprintf::printf("2\n");
     pmm::init(mboot_info);
-    kprintf::printf("mboot_info: %p\n", mboot_info);
+    //kprintf::printf("mboot_info: %p\n", mboot_info);
 
     vga::write_string("Welcome to the KosoroOS!\n",
                       vga::Color::LIGHT_GREEN,
@@ -22,14 +20,14 @@ extern "C" void kmain(void *mboot_info) {
                     kernelName, kernelVMA, kernelVMI, kernelVPA,
                     kernelArch, kernelBuildDate, kernelBuildTime);
 
-    void *page1 = pmm::alloc_page();
+    /*void *page1 = pmm::alloc_page();
     void *page2 = pmm::alloc_page();
     kprintf::printf("Allocated pages: %p, %p\n", page1, page2);
     pmm::free_page(page1);
     kprintf::printf("Freed page: %p\n", page1);
     kprintf::printf("Total memory: %u MB, Used: %u MB\n",
                     pmm::get_total_memory() / (1024 * 1024),
-                    pmm::get_used_memory() / (1024 * 1024));
+                    pmm::get_used_memory() / (1024 * 1024));*/
 
     while (true) {
         asm volatile("hlt");
