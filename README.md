@@ -10,7 +10,7 @@ KosoroOS - OS maded in С++ programming language, this OS maded for fun and stud
 - [X] GDT
 - [X] IDT
 - [ ] VMM
-- [ ] PMM
+- [X] PMM
 
 # Screenshot
 ![image](https://github.com/user-attachments/assets/1f9dc43d-1f5a-490b-b739-9969220bcf48)
